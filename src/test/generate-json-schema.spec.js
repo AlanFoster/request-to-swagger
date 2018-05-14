@@ -8,6 +8,7 @@ describe('simple', () => {
 
     const expected = {
       type: 'object',
+      required: ['name'],
       properties: {
         name: {
           type: 'string',
@@ -29,6 +30,7 @@ describe('simple', () => {
 
     const expected = {
       type: 'object',
+      required: ['id', 'description', 'checked', 'quantity'],
       properties: {
         id: {
           type: 'integer',
@@ -65,6 +67,7 @@ describe('simple', () => {
 
     const expected = {
       type: 'object',
+      required: ['integer', 'number'],
       properties: {
         integer: {
           type: 'integer',
@@ -87,6 +90,7 @@ describe('simple', () => {
 
     const expected = {
       type: 'object',
+      required: ['emptyArray', 'tags'],
       properties: {
         emptyArray: {
           type: 'array',
@@ -120,6 +124,7 @@ describe('simple', () => {
 
     const expected = {
       type: 'object',
+      required: ['arrayOfArray'],
       properties: {
         arrayOfArray: {
           type: 'array',
@@ -146,9 +151,11 @@ describe('simple', () => {
 
     const expected = {
       type: 'object',
+      required: ['address'],
       properties: {
         address: {
           type: 'object',
+          required: ['city'],
           properties: {
             city: { type: 'string' },
           },
@@ -177,6 +184,7 @@ describe('simple', () => {
 
     const expected = {
       type: 'object',
+      required: ['id', 'description', 'checked', 'quantity', 'tags', 'reviews'],
       properties: {
         id: {
           type: 'integer',
@@ -200,6 +208,7 @@ describe('simple', () => {
           type: 'array',
           items: {
             type: 'object',
+            required: ['id', 'comment'],
             properties: {
               id: {
                 type: 'integer',
@@ -239,11 +248,13 @@ describe('simple', () => {
 
     const expected = {
       type: 'object',
+      required: ['blogs'],
       properties: {
         blogs: {
           type: 'array',
           items: {
             type: 'object',
+            required: ['id', 'content', 'comments'],
             properties: {
               id: {
                 type: 'integer',
@@ -255,6 +266,7 @@ describe('simple', () => {
                 type: 'array',
                 items: {
                   type: 'object',
+                  required: ['id', 'content'],
                   properties: {
                     id: {
                       type: 'integer',

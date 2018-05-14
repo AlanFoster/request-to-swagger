@@ -6,6 +6,8 @@ export default function generateJsonSchema(value) {
   if (isObject(value)) {
     return {
       type: 'object',
+      // All keys are required by default when generating a schema for a single object
+      required: Object.keys(value),
       properties: Object.keys(value).reduce((acc, key) => {
         acc[key] = generateJsonSchema(value[key]);
         return acc;
