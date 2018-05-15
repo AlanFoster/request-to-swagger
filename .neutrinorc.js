@@ -8,6 +8,15 @@ module.exports = {
       }
     ],
     '@neutrinojs/jest',
+    [
+      '@neutrinojs/eslint',
+      {
+        eslint: {
+          rules: { "quote-props": ["error", "as-needed", { "numbers": true }] }
+        }
+      }
+    ],
     'neutrino-preset-flow',
+    'neutrino-preset-prettier-eslint',
   ]
 };

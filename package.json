@@ -10,10 +10,14 @@
   },
   "devDependencies": {
     "@neutrinojs/airbnb-base": "^8.2.3",
+    "@neutrinojs/eslint": "^8.2.3",
     "@neutrinojs/jest": "^8.2.3",
     "@neutrinojs/library": "^8.2.3",
+    "eslint-plugin-flowtype-errors": "^3.5.1",
+    "flow-bin": "^0.72.0",
     "jsonschema": "^1.2.4",
     "neutrino": "^8.2.3",
-    "neutrino-preset-flow": "^0.0.4"
+    "neutrino-preset-flow": "^0.0.4",
+    "neutrino-preset-prettier-eslint": "^0.0.7"
   }
 }

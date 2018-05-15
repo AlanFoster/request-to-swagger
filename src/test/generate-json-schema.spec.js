@@ -4,7 +4,7 @@ import generateJsonSchema from '../generate-json-schema';
 describe('generateJsonSchema', () => {
   it('should work for strings', () => {
     const input = {
-      name: 'alan',
+      name: 'alan'
     };
 
     const expected = {
@@ -12,9 +12,9 @@ describe('generateJsonSchema', () => {
       required: ['name'],
       properties: {
         name: {
-          type: 'string',
-        },
-      },
+          type: 'string'
+        }
+      }
     };
 
     const result = generateJsonSchema(input);
@@ -27,7 +27,7 @@ describe('generateJsonSchema', () => {
       description: 'wooden door',
       checked: true,
       quantity: 13.37,
-      ignored: null,
+      ignored: null
     };
 
     const expected = {
@@ -35,18 +35,18 @@ describe('generateJsonSchema', () => {
       required: ['id', 'description', 'checked', 'quantity'],
       properties: {
         id: {
-          type: 'integer',
+          type: 'integer'
         },
         description: {
-          type: 'string',
+          type: 'string'
         },
         checked: {
-          type: 'boolean',
+          type: 'boolean'
         },
         quantity: {
-          type: 'number',
-        },
-      },
+          type: 'number'
+        }
+      }
     };
 
     const result = generateJsonSchema(input);
@@ -54,16 +54,16 @@ describe('generateJsonSchema', () => {
   });
 
   // Note: Swagger 2.0 does not support null values. We'll skip those keys for now.
-  // However, we'll handle these missing keys explicitly within the merging mechanism of multiple schemas
+  // However, we'll handle these missing keys explicitly within the merging
+  // mechanism of multiple schemas
   it('ignores null values', () => {
     const input = {
-      missing: null,
+      missing: null
     };
 
     const expected = {
       type: 'object',
-      properties: {
-      },
+      properties: {}
     };
 
     const result = generateJsonSchema(input);
@@ -73,7 +73,7 @@ describe('generateJsonSchema', () => {
   it('should treat integers and numbers differently', () => {
     const input = {
       integer: 1000,
-      number: 12.34,
+      number: 12.34
     };
 
     const expected = {
@@ -81,12 +81,12 @@ describe('generateJsonSchema', () => {
       required: ['integer', 'number'],
       properties: {
         integer: {
-          type: 'integer',
+          type: 'integer'
         },
         number: {
-          type: 'number',
-        },
-      },
+          type: 'number'
+        }
+      }
     };
 
     const result = generateJsonSchema(input);
@@ -96,7 +96,7 @@ describe('generateJsonSchema', () => {
   it('should work for simple arrays', () => {
     const input = {
       emptyArray: [],
-      tags: ['wooden', 'door', 'foo'],
+      tags: ['wooden', 'door', 'foo']
     };
 
     const expected = {
@@ -105,15 +105,15 @@ describe('generateJsonSchema', () => {
       properties: {
         emptyArray: {
           type: 'array',
-          items: {},
+          items: {}
         },
         tags: {
           type: 'array',
           items: {
-            type: 'string',
-          },
-        },
-      },
+            type: 'string'
+          }
+        }
+      }
     };
 
     const result = generateJsonSchema(input);
@@ -122,16 +122,7 @@ describe('generateJsonSchema', () => {
 
   it('should work for array of arrays', () => {
     const input = {
-      arrayOfArray: [
-        [
-          1,
-          2,
-        ],
-        [
-          3,
-          4,
-        ],
-      ],
+      arrayOfArray: [[1, 2], [3, 4]]
     };
 
     const expected = {
@@ -143,11 +134,11 @@ describe('generateJsonSchema', () => {
           items: {
             type: 'array',
             items: {
-              type: 'integer',
-            },
-          },
-        },
-      },
+              type: 'integer'
+            }
+          }
+        }
+      }
     };
 
     const result = generateJsonSchema(input);
@@ -157,8 +148,8 @@ describe('generateJsonSchema', () => {
   it('should work for simple objects', () => {
     const input = {
       address: {
-        city: 'foo-city',
-      },
+        city: 'foo-city'
+      }
     };
 
     const expected = {
@@ -169,10 +160,10 @@ describe('generateJsonSchema', () => {
           type: 'object',
           required: ['city'],
           properties: {
-            city: { type: 'string' },
-          },
-        },
-      },
+            city: { type: 'string' }
+          }
+        }
+      }
     };
 
     const result = generateJsonSchema(input);
@@ -189,9 +180,9 @@ describe('generateJsonSchema', () => {
       reviews: [
         {
           id: 1,
-          comment: 'Nested comment',
-        },
-      ],
+          comment: 'Nested comment'
+        }
+      ]
     };
 
     const expected = {
@@ -199,22 +190,22 @@ describe('generateJsonSchema', () => {
       required: ['id', 'description', 'checked', 'quantity', 'tags', 'reviews'],
       properties: {
         id: {
-          type: 'integer',
+          type: 'integer'
         },
         description: {
-          type: 'string',
+          type: 'string'
         },
         checked: {
-          type: 'boolean',
+          type: 'boolean'
         },
         quantity: {
-          type: 'number',
+          type: 'number'
         },
         tags: {
           type: 'array',
           items: {
-            type: 'string',
-          },
+            type: 'string'
+          }
         },
         reviews: {
           type: 'array',
@@ -223,15 +214,15 @@ describe('generateJsonSchema', () => {
             required: ['id', 'comment'],
             properties: {
               id: {
-                type: 'integer',
+                type: 'integer'
               },
               comment: {
-                type: 'string',
-              },
-            },
-          },
-        },
-      },
+                type: 'string'
+              }
+            }
+          }
+        }
+      }
     };
 
     const result = generateJsonSchema(input);
@@ -247,15 +238,15 @@ describe('generateJsonSchema', () => {
           comments: [
             {
               id: 1,
-              content: 'first comment',
+              content: 'first comment'
             },
             {
               id: 2,
-              content: 'second comment',
-            },
-          ],
-        },
-      ],
+              content: 'second comment'
+            }
+          ]
+        }
+      ]
     };
 
     const expected = {
@@ -269,10 +260,10 @@ describe('generateJsonSchema', () => {
             required: ['id', 'content', 'comments'],
             properties: {
               id: {
-                type: 'integer',
+                type: 'integer'
               },
               content: {
-                type: 'string',
+                type: 'string'
               },
               comments: {
                 type: 'array',
@@ -281,18 +272,18 @@ describe('generateJsonSchema', () => {
                   required: ['id', 'content'],
                   properties: {
                     id: {
-                      type: 'integer',
+                      type: 'integer'
                     },
                     content: {
-                      type: 'string',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
+                      type: 'string'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     };
 
     const result = generateJsonSchema(input);

@@ -1,48 +1,53 @@
 // @flow
 
+import statusCodes from './status-codes';
 import generateJsonSchema from './generate-json-schema';
-import { STATUS_CODES } from 'http';
 
-const deepClone = value => JSON.parse(JSON.stringify(value));
-const union = function (array, value) {
-  if (array.indexOf(value) === -1) {
-    array.push(value);
-  }
-  return array;
-};
+type Headers = { [string]: string };
 
-type Headers = { [string]: [string] }
-
-type Request = {
+export type Request = {
   method: string,
   url: string,
   headers: Headers,
-  body: any
+  body: ?any
 };
 
-type Response = {
+export type Response = {
   statusCode: number,
-  headers: { [string]: [string] },
-  body: any
+  headers: Headers,
+  body: ?any
 };
 
 type SwaggerParameter = {
-  in: "header" | "path" | "body",
+  in: 'header' | 'path' | 'body',
   name: string,
   type: string,
-  required: boolean,
-  description: string,
+  required: ?boolean
 };
 
 type AvailablePaths = {
   [string]: [SwaggerParameter]
+};
+
+function deepClone(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
-function generateSwaggerPath(request: Request, availablePaths: AvailablePaths = []) {
+function union(array, value) {
+  if (array.indexOf(value) === -1) {
+    array.push(value);
+  }
+  return array;
+}
+
+function generateSwaggerPath(
+  request: Request,
+  availablePaths: AvailablePaths = {}
+) {
   const requestPathName = new URL(request.url).pathname;
 
   // Note: This can be smarter in the future, checking data types, etc.
-  const match = Object.keys(availablePaths).find((path) => {
+  const match = Object.keys(availablePaths).find(path => {
     const regex = path.replace(/{\w+}/g, '.*');
 
     return new RegExp(regex).test(requestPathName);
@@ -51,28 +56,39 @@ function generateSwaggerPath(request: Request, availablePaths: AvailablePaths = 
   return match || requestPathName;
 }
 
-function parseBody(request: Request) {
-  const contentType = request.headers['Content-Type'] || '';
+function parseBody(requestOrResponse: Request | Response): any {
+  const contentType = requestOrResponse.headers['Content-Type'] || '';
 
-  if (request.body !== null && contentType.indexOf('application/json') === 0) {
+  if (
+    typeof requestOrResponse.body === 'string' &&
+    contentType.indexOf('application/json') === 0
+  ) {
     try {
-      return JSON.parse(request.body);
+      return JSON.parse(requestOrResponse.body);
     } catch (e) {
-      throw new Error(`Unable to parse JSON body: ${JSON.stringify(request.body, null, 4)}`);
+      throw new Error(
+        `Unable to parse JSON body: ${JSON.stringify(
+          requestOrResponse.body,
+          null,
+          4
+        )}`
+      );
     }
   }
 
-  return request.body;
+  return requestOrResponse.body;
 }
 
-export default function (schema, request: Request, response: Response) {
+export default function(
+  schema: Object,
+  request: Request,
+  response: Response
+): Object {
   if (schema.swagger !== '2.0') {
     throw new Error('Swagger 2.0 currently only supported');
   }
 
   const swaggerPath = generateSwaggerPath(request, schema.paths);
-  const statusCode = response.statusCode.toString();
-
   const newSchema = deepClone(schema);
 
   newSchema.paths = newSchema.paths || {};
@@ -97,12 +113,14 @@ export default function (schema, request: Request, response: Response) {
 
   if (request.body !== null) {
     method.parameters = method.parameters || [];
-    let bodyParameter = method.parameters.find(parameter => parameter.in === 'body');
+    let bodyParameter: ?Object = method.parameters.find(
+      parameter => parameter.in === 'body'
+    );
     if (!bodyParameter) {
-      bodyParameter = {
+      bodyParameter = ({
         in: 'body',
-        name: 'body',
-      };
+        name: 'body'
+      }: Object);
       method.parameters.push(bodyParameter);
     }
 
@@ -111,10 +129,10 @@ export default function (schema, request: Request, response: Response) {
   }
 
   const responseBody = parseBody(response);
-  method.responses[statusCode] = {
-    description: STATUS_CODES[statusCode],
+  method.responses[response.statusCode] = {
+    description: statusCodes[response.statusCode],
 
-    schema: responseBody === null ? undefined : generateJsonSchema(responseBody),
+    schema: responseBody === null ? undefined : generateJsonSchema(responseBody)
   };
 
   return newSchema;
