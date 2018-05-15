@@ -26,12 +26,29 @@ type Response = {
   body: any
 };
 
-function generateSwaggerPath(request: Request) {
-  if (request.parsedUrl) {
-    return request.parsedUrl;
-  }
+type SwaggerParameter = {
+  in: "header" | "path" | "body",
+  name: string,
+  type: string,
+  required: boolean,
+  description: string,
+};
 
-  return new URL(request.url).pathname;
+type AvailablePaths = {
+  [string]: [SwaggerParameter]
+}
+
+function generateSwaggerPath(request: Request, availablePaths: AvailablePaths = []) {
+  const requestPathName = new URL(request.url).pathname;
+
+  // Note: This can be smarter in the future, checking data types, etc.
+  const match = Object.keys(availablePaths).find((path) => {
+    const regex = path.replace(/{\w+}/g, '.*');
+
+    return new RegExp(regex).test(requestPathName);
+  });
+
+  return match || requestPathName;
 }
 
 function parseBody(request: Request) {
@@ -53,7 +70,7 @@ export default function (schema, request: Request, response: Response) {
     throw new Error('Swagger 2.0 currently only supported');
   }
 
-  const swaggerPath = generateSwaggerPath(request);
+  const swaggerPath = generateSwaggerPath(request, schema.paths);
   const statusCode = response.statusCode.toString();
 
   const newSchema = deepClone(schema);

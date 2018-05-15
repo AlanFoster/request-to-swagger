@@ -25,26 +25,28 @@ function createStartingSchema() {
       version: '1.0',
       title: 'Hello World API',
     },
-    paths: {
-      '/hello': {},
-    },
   };
 }
 
 const getHelloRequest = {
   method: 'GET',
   url: 'http://example.com/hello',
-  parsedUrl: '/hello',
   headers: {
     'Content-Type': 'application/json',
   },
   body: null,
 };
 
+const getUserRequest = {
+  method: 'GET',
+  url: 'http://example.com/users/1234',
+  headers: {},
+  body: null,
+};
+
 const postHelloRequest = {
   method: 'POST',
   url: 'http://example.com/hello',
-  parsedUrl: '/hello',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -111,6 +113,60 @@ describe('requestToSwagger', () => {
     };
 
     const result = requestToSwagger(schema, getHelloRequest, successResponse);
+
+    expect(result).toEqual(expected);
+    expect(validationErrorsFor(result)).toEqual([]);
+  });
+
+  it('works with swagger path params defined', () => {
+    const schema = createStartingSchema();
+    schema.paths = {
+      '/users/{userId}': {
+        parameters: [
+          {
+            in: 'path',
+            name: 'userId',
+            type: 'integer',
+            required: true,
+            description: 'Numeric ID of the user to get',
+          },
+        ],
+      },
+    };
+
+    const expected = {
+      swagger: '2.0',
+      info: {
+        version: '1.0',
+        title: 'Hello World API',
+      },
+      paths: {
+        '/users/{userId}': {
+          parameters: [
+            {
+              in: 'path',
+              name: 'userId',
+              type: 'integer',
+              required: true,
+              description: 'Numeric ID of the user to get',
+            },
+          ],
+          get: {
+            produces: ['application/json'],
+            responses: {
+              200: {
+                description: 'OK',
+                schema: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const result = requestToSwagger(schema, getUserRequest, successResponse);
 
     expect(result).toEqual(expected);
     expect(validationErrorsFor(result)).toEqual([]);
@@ -257,7 +313,8 @@ describe('requestToSwagger', () => {
       { request: getHelloRequest, response: failureResponse },
     ];
 
-    const finalSchema = requestsToSwagger(createStartingSchema(), requests);
+    const initialSchema = createStartingSchema();
+    const finalSchema = requestsToSwagger(initialSchema, requests);
 
     expect(finalSchema).toEqual(expected);
     expect(validationErrorsFor(finalSchema)).toEqual([]);

@@ -2,8 +2,8 @@
 
 ## Assumptions
 
-* This tool only generates Swagger 2.0 as at the time of writing, most client generation
-does not support Swagger 3.0
+* This tool only generates [Swagger 2.0](https://github.com/OAI/OpenAPI-Specification/blob/8b85bfe60d5822871dff5904252e859625af6007/versions/2.0.md#openapi-specification)
+as at the time of writing, most client generation does not support Swagger 3.0
 * This tool will try to differentiate between integers and numbers,
 but this may not always be right due to JavaScript's type limitations
 * Null is not currently supported by Swagger 2.0
