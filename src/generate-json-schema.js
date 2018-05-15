@@ -1,21 +1,32 @@
+// @flow
+
 function isObject(item) {
   return (typeof item === 'object' && !Array.isArray(item) && item !== null);
 }
 
 export default function generateJsonSchema(value) {
   if (isObject(value)) {
-    return {
+    // All keys are required by default when generating a schema for a single object
+    // Note that null keys are ignored, as there is no type information available
+    // This logic will instead be implemented within the merging of multiple schemas
+    const requiredKeys = Object.keys(value).filter(key => value[key] !== null);
+
+    const result = {
       type: 'object',
-      // All keys are required by default when generating a schema for a single object
-      required: Object.keys(value),
-      properties: Object.keys(value).reduce((acc, key) => {
+      properties: requiredKeys.reduce((acc, key) => {
         acc[key] = generateJsonSchema(value[key]);
         return acc;
       }, {}),
     };
+
+    if (requiredKeys.length > 0) {
+      result.required = requiredKeys;
+    }
+
+    return result;
   } else if (Array.isArray(value)) {
     if (value.length === 0) {
-      return { type: 'array' };
+      return { type: 'array', items: {} };
     }
 
     return {

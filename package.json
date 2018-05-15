@@ -12,6 +12,8 @@
     "@neutrinojs/airbnb-base": "^8.2.3",
     "@neutrinojs/jest": "^8.2.3",
     "@neutrinojs/library": "^8.2.3",
-    "neutrino": "^8.2.3"
+    "jsonschema": "^1.2.4",
+    "neutrino": "^8.2.3",
+    "neutrino-preset-flow": "^0.0.4"
   }
 }

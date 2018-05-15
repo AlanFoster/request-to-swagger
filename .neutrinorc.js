@@ -7,6 +7,7 @@ module.exports = {
         name: 'request-to-swagger'
       }
     ],
-    '@neutrinojs/jest'
+    '@neutrinojs/jest',
+    'neutrino-preset-flow',
   ]
 };

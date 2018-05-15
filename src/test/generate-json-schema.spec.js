@@ -1,6 +1,7 @@
+// @flow
 import generateJsonSchema from '../generate-json-schema';
 
-describe('simple', () => {
+describe('generateJsonSchema', () => {
   it('should work for strings', () => {
     const input = {
       name: 'alan',
@@ -26,6 +27,7 @@ describe('simple', () => {
       description: 'wooden door',
       checked: true,
       quantity: 13.37,
+      ignored: null,
     };
 
     const expected = {
@@ -51,12 +53,21 @@ describe('simple', () => {
     expect(result).toEqual(expected);
   });
 
-  it('does not support null', () => {
+  // Note: Swagger 2.0 does not support null values. We'll skip those keys for now.
+  // However, we'll handle these missing keys explicitly within the merging mechanism of multiple schemas
+  it('ignores null values', () => {
     const input = {
       missing: null,
     };
 
-    expect(() => generateJsonSchema(input)).toThrow('Data type: object not supported, value: null');
+    const expected = {
+      type: 'object',
+      properties: {
+      },
+    };
+
+    const result = generateJsonSchema(input);
+    expect(result).toEqual(expected);
   });
 
   it('should treat integers and numbers differently', () => {
@@ -94,6 +105,7 @@ describe('simple', () => {
       properties: {
         emptyArray: {
           type: 'array',
+          items: {},
         },
         tags: {
           type: 'array',
