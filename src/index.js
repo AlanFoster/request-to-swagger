@@ -1,7 +1,7 @@
 // @flow
 
 import statusCodes from './status-codes';
-import generateJsonSchema from './generate-json-schema';
+import * as jsonSchema from './json-schema';
 
 type Headers = { [string]: string };
 
@@ -26,7 +26,12 @@ type SwaggerParameter = {
 };
 
 type AvailablePaths = {
-  [string]: [SwaggerParameter]
+  [string]: Array<SwaggerParameter>
+};
+
+type SwaggerPathDetails = {
+  path: string,
+  parameters: Array<SwaggerParameter>
 };
 
 function deepClone(value) {
@@ -40,20 +45,52 @@ function union(array, value) {
   return array;
 }
 
-function generateSwaggerPath(
+function parsePath(
   request: Request,
   availablePaths: AvailablePaths = {}
-) {
+): SwaggerPathDetails {
   const requestPathName = new URL(request.url).pathname;
 
   // Note: This can be smarter in the future, checking data types, etc.
-  const match = Object.keys(availablePaths).find(path => {
+  const existingPath = Object.keys(availablePaths).find(path => {
     const regex = path.replace(/{\w+}/g, '.*');
 
     return new RegExp(regex).test(requestPathName);
   });
 
-  return match || requestPathName;
+  // TODO: Doesn't consider new params
+  if (existingPath) {
+    return { path: existingPath, parameters: [] };
+  }
+
+  // TODO: Doesn't consider UUIDs being in arbitrary places in a path
+  const uuid = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+  const pathUuids = requestPathName.match(uuid);
+
+  // TODO: Doesn't consider new params
+  if (!pathUuids) {
+    return { path: requestPathName, parameters: [] };
+  }
+
+  return pathUuids.reduce(
+    function(details: SwaggerPathDetails, uuid, index) {
+      const name = 'uuid' + (index === 0 ? '' : index);
+
+      return {
+        path: details.path.replace(uuid, `{${name}}`),
+        parameters: details.parameters.concat([
+          {
+            description: name,
+            in: 'path',
+            name: name,
+            required: true,
+            type: 'string'
+          }
+        ])
+      };
+    },
+    { path: requestPathName, parameters: [] }
+  );
 }
 
 function parseBody(requestOrResponse: Request | Response): any {
@@ -88,7 +125,10 @@ export default function(
     throw new Error('Swagger 2.0 currently only supported');
   }
 
-  const swaggerPath = generateSwaggerPath(request, schema.paths);
+  const { path: swaggerPath, parameters: swaggerDetails } = parsePath(
+    request,
+    schema.paths
+  );
   const newSchema = deepClone(schema);
 
   newSchema.paths = newSchema.paths || {};
@@ -101,38 +141,67 @@ export default function(
 
   const method = path[requestMethod];
 
+  method.consumes = method.consumes || [];
   if (request.headers['Content-Type']) {
-    method.consumes = method.consumes || [];
     union(method.consumes, request.headers['Content-Type']);
   }
 
+  method.produces = method.produces || [];
   if (response.headers['Content-Type']) {
-    method.produces = method.produces || [];
     union(method.produces, response.headers['Content-Type']);
   }
 
+  method.parameters = method.parameters || [];
+  method.parameters = method.parameters.concat(swaggerDetails);
+
   if (request.body !== null) {
-    method.parameters = method.parameters || [];
+    const requestBody = parseBody(request);
+    const requestBodySchema = jsonSchema.generate(requestBody);
+
     let bodyParameter: ?Object = method.parameters.find(
       parameter => parameter.in === 'body'
     );
     if (!bodyParameter) {
       bodyParameter = ({
         in: 'body',
-        name: 'body'
+        name: 'body',
+        schema: requestBodySchema
       }: Object);
       method.parameters.push(bodyParameter);
+    } else {
+      bodyParameter.schema = jsonSchema.merge(
+        bodyParameter.schema,
+        requestBodySchema
+      );
     }
-
-    const requestBody = parseBody(request);
-    bodyParameter.schema = generateJsonSchema(requestBody);
   }
 
+  method.responses[response.statusCode] =
+    method.responses[response.statusCode] || {};
+  const responses = method.responses[response.statusCode];
+
+  responses.description =
+    responses.description || statusCodes[response.statusCode];
+
   const responseBody = parseBody(response);
+  let responseBodySchema;
+
+  if (responseBody === null) {
+    responseBodySchema = null;
+  } else {
+    responseBodySchema = jsonSchema.generate(responseBody);
+
+    if (method.responses[response.statusCode].schema) {
+      responseBodySchema = jsonSchema.merge(
+        method.responses[response.statusCode].schema,
+        responseBodySchema
+      );
+    }
+  }
+
   method.responses[response.statusCode] = {
     description: statusCodes[response.statusCode],
-
-    schema: responseBody === null ? undefined : generateJsonSchema(responseBody)
+    schema: responseBodySchema
   };
 
   return newSchema;

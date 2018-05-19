@@ -1,3 +1,5 @@
+const loaderMerge = require("@neutrinojs/loader-merge");
+
 module.exports = {
   use: [
     '@neutrinojs/airbnb-base',
@@ -18,5 +20,10 @@ module.exports = {
     ],
     'neutrino-preset-flow',
     'neutrino-preset-prettier-eslint',
+    (neutrino) => {
+      neutrino.use(loaderMerge('compile', 'babel'), {
+        plugins: ['transform-object-rest-spread']
+      });
+    }
   ]
 };

@@ -1,7 +1,7 @@
 {
   "name": "request-to-swagger",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "build/index.js",
   "license": "MIT",
   "scripts": {
     "build": "neutrino build",
@@ -13,6 +13,7 @@
     "@neutrinojs/eslint": "^8.2.3",
     "@neutrinojs/jest": "^8.2.3",
     "@neutrinojs/library": "^8.2.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "eslint-plugin-flowtype-errors": "^3.5.1",
     "flow-bin": "^0.72.0",
     "jsonschema": "^1.2.4",

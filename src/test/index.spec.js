@@ -49,7 +49,26 @@ const getUserRequest: Request = {
   body: null
 };
 
+const getNotificationRequest: Request = {
+  method: 'GET',
+  url:
+    'http://example.com/users/d6fae598-f62d-468e-845e-d4b1b2020bce/notifications/03c9b475-376d-4eae-bd02-d7bba40d00c8.json',
+  headers: {},
+  body: null
+};
+
 const postHelloRequest: Request = {
+  method: 'POST',
+  url: 'http://example.com/hello',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: `{
+    "userName": "userName"
+  }`
+};
+
+const postHelloRequestWithExtraDetails: Request = {
   method: 'POST',
   url: 'http://example.com/hello',
   headers: {
@@ -67,7 +86,24 @@ const successResponse: Response = {
   headers: {
     'Content-Type': 'application/json'
   },
-  body: '"Hello world!"'
+  body: `{
+    "data": {
+      "result": "some string"
+    }
+  }`
+};
+
+const successResponseWithExtraDetails: Response = {
+  statusCode: 200,
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: `{
+    "data": {
+      "result": "some string",
+      "extraField": "some value"
+    }
+  }`
 };
 
 const failureResponse: Response = {
@@ -91,9 +127,8 @@ describe('requestToSwagger', () => {
     ).toThrow('Swagger 2.0 currently only supported');
   });
 
-  it('works creates a new path when an existing path is not present', () => {
+  it('creates a new path when an existing path is not present', () => {
     const schema = createStartingSchema();
-    schema.paths = undefined;
 
     const expected = {
       swagger: '2.0',
@@ -104,16 +139,29 @@ describe('requestToSwagger', () => {
       paths: {
         '/hello': {
           get: {
-            consumes: ['application/json'],
-            produces: ['application/json'],
             responses: {
               '200': {
                 description: 'OK',
                 schema: {
-                  type: 'string'
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'object',
+                      properties: {
+                        result: {
+                          type: 'string'
+                        }
+                      },
+                      required: ['result']
+                    }
+                  },
+                  required: ['data']
                 }
               }
-            }
+            },
+            consumes: ['application/json'],
+            produces: ['application/json'],
+            parameters: []
           }
         }
       }
@@ -125,19 +173,86 @@ describe('requestToSwagger', () => {
     expect(validationErrorsFor(result)).toEqual([]);
   });
 
-  it('works with swagger path params defined', () => {
+  it('generates parameters when UUIDs are present within the path', function() {
+    const expected = {
+      swagger: '2.0',
+      info: {
+        version: '1.0',
+        title: 'Hello World API'
+      },
+      paths: {
+        '/users/{uuid}/notifications/{uuid1}.json': {
+          get: {
+            parameters: [
+              {
+                in: 'path',
+                name: 'uuid',
+                type: 'string',
+                required: true,
+                description: 'uuid'
+              },
+              {
+                in: 'path',
+                name: 'uuid1',
+                type: 'string',
+                required: true,
+                description: 'uuid1'
+              }
+            ],
+            consumes: [],
+            produces: ['application/json'],
+            responses: {
+              '200': {
+                description: 'OK',
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'object',
+                      properties: {
+                        result: {
+                          type: 'string'
+                        }
+                      },
+                      required: ['result']
+                    }
+                  },
+                  required: ['data']
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    const schema = createStartingSchema();
+    const result = requestToSwagger(
+      schema,
+      getNotificationRequest,
+      successResponse
+    );
+
+    expect(result).toEqual(expected);
+    expect(validationErrorsFor(result)).toEqual([]);
+  });
+
+  it('works with existing swagger path params defined', () => {
     const schema = createStartingSchema();
     schema.paths = {
       '/users/{userId}': {
-        parameters: [
-          {
-            in: 'path',
-            name: 'userId',
-            type: 'integer',
-            required: true,
-            description: 'Numeric ID of the user to get'
-          }
-        ]
+        get: {
+          parameters: [
+            {
+              in: 'path',
+              name: 'userId',
+              type: 'integer',
+              required: true,
+              description: 'Numeric ID of the user to get'
+            }
+          ],
+          responses: {}
+        }
       }
     };
 
@@ -149,22 +264,35 @@ describe('requestToSwagger', () => {
       },
       paths: {
         '/users/{userId}': {
-          parameters: [
-            {
-              in: 'path',
-              name: 'userId',
-              type: 'integer',
-              required: true,
-              description: 'Numeric ID of the user to get'
-            }
-          ],
           get: {
+            parameters: [
+              {
+                in: 'path',
+                name: 'userId',
+                type: 'integer',
+                required: true,
+                description: 'Numeric ID of the user to get'
+              }
+            ],
+            consumes: [],
             produces: ['application/json'],
             responses: {
               '200': {
                 description: 'OK',
                 schema: {
-                  type: 'string'
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'object',
+                      properties: {
+                        result: {
+                          type: 'string'
+                        }
+                      },
+                      required: ['result']
+                    }
+                  },
+                  required: ['data']
                 }
               }
             }
@@ -179,6 +307,78 @@ describe('requestToSwagger', () => {
     expect(validationErrorsFor(result)).toEqual([]);
   });
 
+  it('aggregates requests to the same path into one definition', () => {
+    const expected = {
+      swagger: '2.0',
+      info: {
+        version: '1.0',
+        title: 'Hello World API'
+      },
+      paths: {
+        '/hello': {
+          post: {
+            parameters: [
+              {
+                in: 'body',
+                name: 'body',
+                schema: {
+                  type: 'object',
+                  required: ['userName'],
+                  properties: {
+                    userName: {
+                      type: 'string'
+                    },
+                    firstName: {
+                      type: 'string'
+                    },
+                    lastName: {
+                      type: 'string'
+                    }
+                  }
+                }
+              }
+            ],
+            consumes: ['application/json'],
+            produces: ['application/json'],
+
+            responses: {
+              '200': {
+                description: 'OK',
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'object',
+                      properties: {
+                        result: {
+                          type: 'string'
+                        }
+                      },
+                      required: ['result']
+                    }
+                  },
+                  required: ['data']
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    const requests = [
+      { request: postHelloRequest, response: successResponse },
+      { request: postHelloRequestWithExtraDetails, response: successResponse },
+      { request: postHelloRequest, response: successResponse }
+    ];
+
+    const initialSchema = createStartingSchema();
+    const finalSchema = requestsToSwagger(initialSchema, requests);
+
+    expect(finalSchema).toEqual(expected);
+    expect(validationErrorsFor(finalSchema)).toEqual([]);
+  });
+
   it('works with multiple simple GET request and responses', () => {
     const expected = {
       swagger: '2.0',
@@ -189,6 +389,7 @@ describe('requestToSwagger', () => {
       paths: {
         '/hello': {
           get: {
+            parameters: [],
             consumes: ['application/json'],
             produces: ['application/json'],
 
@@ -196,7 +397,19 @@ describe('requestToSwagger', () => {
               '200': {
                 description: 'OK',
                 schema: {
-                  type: 'string'
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'object',
+                      properties: {
+                        result: {
+                          type: 'string'
+                        }
+                      },
+                      required: ['result']
+                    }
+                  },
+                  required: ['data']
                 }
               },
               '500': {
@@ -228,7 +441,7 @@ describe('requestToSwagger', () => {
     expect(validationErrorsFor(finalSchema)).toEqual([]);
   });
 
-  it('works with multiple simple request and responses', () => {
+  it('works with multiple simple requests and responses', () => {
     const expected = {
       swagger: '2.0',
       info: {
@@ -246,15 +459,9 @@ describe('requestToSwagger', () => {
                 name: 'body',
                 schema: {
                   type: 'object',
-                  required: ['userName', 'firstName', 'lastName'],
+                  required: ['userName'],
                   properties: {
                     userName: {
-                      type: 'string'
-                    },
-                    firstName: {
-                      type: 'string'
-                    },
-                    lastName: {
                       type: 'string'
                     }
                   }
@@ -265,7 +472,19 @@ describe('requestToSwagger', () => {
               '200': {
                 description: 'OK',
                 schema: {
-                  type: 'string'
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'object',
+                      properties: {
+                        result: {
+                          type: 'string'
+                        }
+                      },
+                      required: ['result']
+                    }
+                  },
+                  required: ['data']
                 }
               },
               '500': {
@@ -282,6 +501,7 @@ describe('requestToSwagger', () => {
           },
 
           get: {
+            parameters: [],
             consumes: ['application/json'],
             produces: ['application/json'],
 
@@ -289,7 +509,22 @@ describe('requestToSwagger', () => {
               '200': {
                 description: 'OK',
                 schema: {
-                  type: 'string'
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'object',
+                      properties: {
+                        result: {
+                          type: 'string'
+                        },
+                        extraField: {
+                          type: 'string'
+                        }
+                      },
+                      required: ['result']
+                    }
+                  },
+                  required: ['data']
                 }
               },
               '500': {
@@ -313,7 +548,7 @@ describe('requestToSwagger', () => {
       { request: postHelloRequest, response: failureResponse },
 
       { request: getHelloRequest, response: successResponse },
-      { request: getHelloRequest, response: successResponse },
+      { request: getHelloRequest, response: successResponseWithExtraDetails },
       { request: getHelloRequest, response: failureResponse }
     ];
 

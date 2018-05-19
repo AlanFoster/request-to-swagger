@@ -1,7 +1,7 @@
 // @flow
-import generateJsonSchema from '../generate-json-schema';
+import generate from '../';
 
-describe('generateJsonSchema', () => {
+describe('generate', () => {
   it('should work for strings', () => {
     const input = {
       name: 'alan'
@@ -17,7 +17,7 @@ describe('generateJsonSchema', () => {
       }
     };
 
-    const result = generateJsonSchema(input);
+    const result = generate(input);
     expect(result).toEqual(expected);
   });
 
@@ -49,7 +49,7 @@ describe('generateJsonSchema', () => {
       }
     };
 
-    const result = generateJsonSchema(input);
+    const result = generate(input);
     expect(result).toEqual(expected);
   });
 
@@ -66,7 +66,7 @@ describe('generateJsonSchema', () => {
       properties: {}
     };
 
-    const result = generateJsonSchema(input);
+    const result = generate(input);
     expect(result).toEqual(expected);
   });
 
@@ -89,7 +89,7 @@ describe('generateJsonSchema', () => {
       }
     };
 
-    const result = generateJsonSchema(input);
+    const result = generate(input);
     expect(result).toEqual(expected);
   });
 
@@ -116,7 +116,7 @@ describe('generateJsonSchema', () => {
       }
     };
 
-    const result = generateJsonSchema(input);
+    const result = generate(input);
     expect(result).toEqual(expected);
   });
 
@@ -141,7 +141,7 @@ describe('generateJsonSchema', () => {
       }
     };
 
-    const result = generateJsonSchema(input);
+    const result = generate(input);
     expect(result).toEqual(expected);
   });
 
@@ -166,7 +166,7 @@ describe('generateJsonSchema', () => {
       }
     };
 
-    const result = generateJsonSchema(input);
+    const result = generate(input);
     expect(result).toEqual(expected);
   });
 
@@ -225,7 +225,7 @@ describe('generateJsonSchema', () => {
       }
     };
 
-    const result = generateJsonSchema(input);
+    const result = generate(input);
     expect(result).toEqual(expected);
   });
 
@@ -286,7 +286,7 @@ describe('generateJsonSchema', () => {
       }
     };
 
-    const result = generateJsonSchema(input);
+    const result = generate(input);
     expect(result).toEqual(expected);
   });
 });
