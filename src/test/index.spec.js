@@ -1,18 +1,7 @@
 // @flow
 
-import { Validator } from 'jsonschema';
 import requestToSwagger from '../';
 import type { Request, Response } from '../';
-import swaggerSchema from './schemas/swagger-2.0.0.json';
-import jsonSchemaDraft04 from './schemas/json-schema-draft-04.json';
-
-const validator = new Validator();
-validator.addSchema(swaggerSchema);
-validator.addSchema(jsonSchemaDraft04);
-
-function validationErrorsFor(value) {
-  return validator.validate(value, swaggerSchema).errors;
-}
 
 function requestsToSwagger(
   schema: Object,
@@ -170,7 +159,7 @@ describe('requestToSwagger', () => {
     const result = requestToSwagger(schema, getHelloRequest, successResponse);
 
     expect(result).toEqual(expected);
-    expect(validationErrorsFor(result)).toEqual([]);
+    expect(result).toBeValidSwagger();
   });
 
   it('generates parameters when UUIDs are present within the path', function() {
@@ -234,7 +223,7 @@ describe('requestToSwagger', () => {
     );
 
     expect(result).toEqual(expected);
-    expect(validationErrorsFor(result)).toEqual([]);
+    expect(result).toBeValidSwagger();
   });
 
   it('works with existing swagger path params defined', () => {
@@ -304,7 +293,7 @@ describe('requestToSwagger', () => {
     const result = requestToSwagger(schema, getUserRequest, successResponse);
 
     expect(result).toEqual(expected);
-    expect(validationErrorsFor(result)).toEqual([]);
+    expect(result).toBeValidSwagger();
   });
 
   it('aggregates requests to the same path into one definition', () => {
@@ -376,7 +365,7 @@ describe('requestToSwagger', () => {
     const finalSchema = requestsToSwagger(initialSchema, requests);
 
     expect(finalSchema).toEqual(expected);
-    expect(validationErrorsFor(finalSchema)).toEqual([]);
+    expect(finalSchema).toBeValidSwagger();
   });
 
   it('works with multiple simple GET request and responses', () => {
@@ -438,7 +427,7 @@ describe('requestToSwagger', () => {
     const finalSchema = requestsToSwagger(initialSchema, requests);
 
     expect(finalSchema).toEqual(expected);
-    expect(validationErrorsFor(finalSchema)).toEqual([]);
+    expect(finalSchema).toBeValidSwagger();
   });
 
   it('works with multiple simple requests and responses', () => {
@@ -556,6 +545,6 @@ describe('requestToSwagger', () => {
     const finalSchema = requestsToSwagger(initialSchema, requests);
 
     expect(finalSchema).toEqual(expected);
-    expect(validationErrorsFor(finalSchema)).toEqual([]);
+    expect(finalSchema).toBeValidSwagger();
   });
 });

@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`echo generates a valid schema 1`] = `
+Object {
+  "info": Object {
+    "title": "Generated Schema",
+    "version": "1.0",
+  },
+  "paths": Object {
+    "/echo/hello": Object {
+      "get": Object {
+        "consumes": Array [],
+        "parameters": Array [],
+        "produces": Array [
+          "application/json",
+        ],
+        "responses": Object {
+          "200": Object {
+            "description": "OK",
+            "schema": Object {
+              "properties": Object {
+                "response": Object {
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "response",
+              ],
+              "type": "object",
+            },
+          },
+        },
+      },
+    },
+  },
+  "swagger": "2.0",
+}
+`;

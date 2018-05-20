@@ -104,13 +104,7 @@ function parseBody(requestOrResponse: Request | Response): any {
     try {
       return JSON.parse(requestOrResponse.body);
     } catch (e) {
-      throw new Error(
-        `Unable to parse JSON body: ${JSON.stringify(
-          requestOrResponse.body,
-          null,
-          4
-        )}`
-      );
+      throw new Error(`Unable to parse JSON body: ${requestOrResponse.body}`);
     }
   }
 

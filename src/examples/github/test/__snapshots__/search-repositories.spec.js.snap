@@ -1,0 +1,429 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`echo generates a valid schema 1`] = `
+Object {
+  "info": Object {
+    "title": "Generated Schema",
+    "version": "1.0",
+  },
+  "paths": Object {
+    "/search/repositories": Object {
+      "get": Object {
+        "consumes": Array [],
+        "parameters": Array [],
+        "produces": Array [
+          "application/json; charset=utf-8",
+        ],
+        "responses": Object {
+          "200": Object {
+            "description": "OK",
+            "schema": Object {
+              "properties": Object {
+                "incomplete_results": Object {
+                  "type": "boolean",
+                },
+                "items": Object {
+                  "items": Object {
+                    "properties": Object {
+                      "archive_url": Object {
+                        "type": "string",
+                      },
+                      "archived": Object {
+                        "type": "boolean",
+                      },
+                      "assignees_url": Object {
+                        "type": "string",
+                      },
+                      "blobs_url": Object {
+                        "type": "string",
+                      },
+                      "branches_url": Object {
+                        "type": "string",
+                      },
+                      "clone_url": Object {
+                        "type": "string",
+                      },
+                      "collaborators_url": Object {
+                        "type": "string",
+                      },
+                      "comments_url": Object {
+                        "type": "string",
+                      },
+                      "commits_url": Object {
+                        "type": "string",
+                      },
+                      "compare_url": Object {
+                        "type": "string",
+                      },
+                      "contents_url": Object {
+                        "type": "string",
+                      },
+                      "contributors_url": Object {
+                        "type": "string",
+                      },
+                      "created_at": Object {
+                        "type": "string",
+                      },
+                      "default_branch": Object {
+                        "type": "string",
+                      },
+                      "deployments_url": Object {
+                        "type": "string",
+                      },
+                      "description": Object {
+                        "type": "string",
+                      },
+                      "downloads_url": Object {
+                        "type": "string",
+                      },
+                      "events_url": Object {
+                        "type": "string",
+                      },
+                      "fork": Object {
+                        "type": "boolean",
+                      },
+                      "forks": Object {
+                        "type": "integer",
+                      },
+                      "forks_count": Object {
+                        "type": "integer",
+                      },
+                      "forks_url": Object {
+                        "type": "string",
+                      },
+                      "full_name": Object {
+                        "type": "string",
+                      },
+                      "git_commits_url": Object {
+                        "type": "string",
+                      },
+                      "git_refs_url": Object {
+                        "type": "string",
+                      },
+                      "git_tags_url": Object {
+                        "type": "string",
+                      },
+                      "git_url": Object {
+                        "type": "string",
+                      },
+                      "has_downloads": Object {
+                        "type": "boolean",
+                      },
+                      "has_issues": Object {
+                        "type": "boolean",
+                      },
+                      "has_pages": Object {
+                        "type": "boolean",
+                      },
+                      "has_projects": Object {
+                        "type": "boolean",
+                      },
+                      "has_wiki": Object {
+                        "type": "boolean",
+                      },
+                      "homepage": Object {
+                        "type": "string",
+                      },
+                      "hooks_url": Object {
+                        "type": "string",
+                      },
+                      "html_url": Object {
+                        "type": "string",
+                      },
+                      "id": Object {
+                        "type": "integer",
+                      },
+                      "issue_comment_url": Object {
+                        "type": "string",
+                      },
+                      "issue_events_url": Object {
+                        "type": "string",
+                      },
+                      "issues_url": Object {
+                        "type": "string",
+                      },
+                      "keys_url": Object {
+                        "type": "string",
+                      },
+                      "labels_url": Object {
+                        "type": "string",
+                      },
+                      "language": Object {
+                        "type": "string",
+                      },
+                      "languages_url": Object {
+                        "type": "string",
+                      },
+                      "license": Object {
+                        "properties": Object {
+                          "key": Object {
+                            "type": "string",
+                          },
+                          "name": Object {
+                            "type": "string",
+                          },
+                          "spdx_id": Object {
+                            "type": "string",
+                          },
+                          "url": Object {
+                            "type": "string",
+                          },
+                        },
+                        "required": Array [
+                          "key",
+                          "name",
+                          "spdx_id",
+                          "url",
+                        ],
+                        "type": "object",
+                      },
+                      "merges_url": Object {
+                        "type": "string",
+                      },
+                      "milestones_url": Object {
+                        "type": "string",
+                      },
+                      "name": Object {
+                        "type": "string",
+                      },
+                      "notifications_url": Object {
+                        "type": "string",
+                      },
+                      "open_issues": Object {
+                        "type": "integer",
+                      },
+                      "open_issues_count": Object {
+                        "type": "integer",
+                      },
+                      "owner": Object {
+                        "properties": Object {
+                          "avatar_url": Object {
+                            "type": "string",
+                          },
+                          "events_url": Object {
+                            "type": "string",
+                          },
+                          "followers_url": Object {
+                            "type": "string",
+                          },
+                          "following_url": Object {
+                            "type": "string",
+                          },
+                          "gists_url": Object {
+                            "type": "string",
+                          },
+                          "gravatar_id": Object {
+                            "type": "string",
+                          },
+                          "html_url": Object {
+                            "type": "string",
+                          },
+                          "id": Object {
+                            "type": "integer",
+                          },
+                          "login": Object {
+                            "type": "string",
+                          },
+                          "organizations_url": Object {
+                            "type": "string",
+                          },
+                          "received_events_url": Object {
+                            "type": "string",
+                          },
+                          "repos_url": Object {
+                            "type": "string",
+                          },
+                          "site_admin": Object {
+                            "type": "boolean",
+                          },
+                          "starred_url": Object {
+                            "type": "string",
+                          },
+                          "subscriptions_url": Object {
+                            "type": "string",
+                          },
+                          "type": Object {
+                            "type": "string",
+                          },
+                          "url": Object {
+                            "type": "string",
+                          },
+                        },
+                        "required": Array [
+                          "login",
+                          "id",
+                          "avatar_url",
+                          "gravatar_id",
+                          "url",
+                          "html_url",
+                          "followers_url",
+                          "following_url",
+                          "gists_url",
+                          "starred_url",
+                          "subscriptions_url",
+                          "organizations_url",
+                          "repos_url",
+                          "events_url",
+                          "received_events_url",
+                          "type",
+                          "site_admin",
+                        ],
+                        "type": "object",
+                      },
+                      "private": Object {
+                        "type": "boolean",
+                      },
+                      "pulls_url": Object {
+                        "type": "string",
+                      },
+                      "pushed_at": Object {
+                        "type": "string",
+                      },
+                      "releases_url": Object {
+                        "type": "string",
+                      },
+                      "score": Object {
+                        "type": "number",
+                      },
+                      "size": Object {
+                        "type": "integer",
+                      },
+                      "ssh_url": Object {
+                        "type": "string",
+                      },
+                      "stargazers_count": Object {
+                        "type": "integer",
+                      },
+                      "stargazers_url": Object {
+                        "type": "string",
+                      },
+                      "statuses_url": Object {
+                        "type": "string",
+                      },
+                      "subscribers_url": Object {
+                        "type": "string",
+                      },
+                      "subscription_url": Object {
+                        "type": "string",
+                      },
+                      "svn_url": Object {
+                        "type": "string",
+                      },
+                      "tags_url": Object {
+                        "type": "string",
+                      },
+                      "teams_url": Object {
+                        "type": "string",
+                      },
+                      "trees_url": Object {
+                        "type": "string",
+                      },
+                      "updated_at": Object {
+                        "type": "string",
+                      },
+                      "url": Object {
+                        "type": "string",
+                      },
+                      "watchers": Object {
+                        "type": "integer",
+                      },
+                      "watchers_count": Object {
+                        "type": "integer",
+                      },
+                    },
+                    "required": Array [
+                      "id",
+                      "name",
+                      "full_name",
+                      "owner",
+                      "private",
+                      "html_url",
+                      "description",
+                      "fork",
+                      "url",
+                      "forks_url",
+                      "keys_url",
+                      "collaborators_url",
+                      "teams_url",
+                      "hooks_url",
+                      "issue_events_url",
+                      "events_url",
+                      "assignees_url",
+                      "branches_url",
+                      "tags_url",
+                      "blobs_url",
+                      "git_tags_url",
+                      "git_refs_url",
+                      "trees_url",
+                      "statuses_url",
+                      "languages_url",
+                      "stargazers_url",
+                      "contributors_url",
+                      "subscribers_url",
+                      "subscription_url",
+                      "commits_url",
+                      "git_commits_url",
+                      "comments_url",
+                      "issue_comment_url",
+                      "contents_url",
+                      "compare_url",
+                      "merges_url",
+                      "archive_url",
+                      "downloads_url",
+                      "issues_url",
+                      "pulls_url",
+                      "milestones_url",
+                      "notifications_url",
+                      "labels_url",
+                      "releases_url",
+                      "deployments_url",
+                      "created_at",
+                      "updated_at",
+                      "pushed_at",
+                      "git_url",
+                      "ssh_url",
+                      "clone_url",
+                      "svn_url",
+                      "homepage",
+                      "size",
+                      "stargazers_count",
+                      "watchers_count",
+                      "language",
+                      "has_issues",
+                      "has_projects",
+                      "has_downloads",
+                      "has_wiki",
+                      "has_pages",
+                      "forks_count",
+                      "archived",
+                      "open_issues_count",
+                      "license",
+                      "forks",
+                      "open_issues",
+                      "watchers",
+                      "default_branch",
+                      "score",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                "total_count": Object {
+                  "type": "integer",
+                },
+              },
+              "required": Array [
+                "total_count",
+                "incomplete_results",
+                "items",
+              ],
+              "type": "object",
+            },
+          },
+        },
+      },
+    },
+  },
+  "swagger": "2.0",
+}
+`;

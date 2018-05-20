@@ -9,7 +9,11 @@ module.exports = {
         name: 'request-to-swagger'
       }
     ],
-    '@neutrinojs/jest',
+    [
+      '@neutrinojs/jest', {
+        setupTestFrameworkScriptFile: "<rootDir>/jest/setup.js",
+      }
+    ],
     [
       '@neutrinojs/eslint',
       {

@@ -29,7 +29,7 @@ export default function mergeJsonSchema(first: any, second: any): Object {
     throw new Error(
       `The types ${asString(first.type)} and ${asString(
         second.type
-      )} are not compatible`
+      )} are not compatible for '${asString(first)}' and '${asString(second)}'`
     );
   }
 
