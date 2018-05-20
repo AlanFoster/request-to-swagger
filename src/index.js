@@ -1,5 +1,6 @@
 // @flow
 
+import deepMerge from 'deepmerge';
 import statusCodes from './status-codes';
 import * as jsonSchema from './json-schema';
 
@@ -125,33 +126,48 @@ export default function(
     throw new Error('Swagger 2.0 currently only supported');
   }
 
+  const requestMethod = request.method.toLowerCase();
+  const statusCode = response.statusCode;
   const { path: swaggerPath, parameters: swaggerDetails } = parsePath(
     request,
     schema.paths
   );
-  const newSchema = deepClone(schema);
+  const defaultSchema = {
+    swagger: '2.0',
 
-  newSchema.paths = newSchema.paths || {};
-  newSchema.paths[swaggerPath] = newSchema.paths[swaggerPath] || {};
-  const path = newSchema.paths[swaggerPath];
-  const requestMethod = request.method.toLowerCase();
-  if (!path[requestMethod]) {
-    path[requestMethod] = { responses: {} };
-  }
+    info: {
+      version: '1.0',
+      title: 'Generated Schema'
+    },
 
-  const method = path[requestMethod];
+    paths: {
+      [swaggerPath]: {
+        [request.method.toLowerCase()]: {
+          consumes: [],
+          produces: [],
+          parameters: [],
+          responses: {
+            [statusCode]: {
+              description: statusCodes[statusCode] || 'Unknown status code'
+            }
+          }
+        }
+      }
+    }
+  };
 
-  method.consumes = method.consumes || [];
+  const newSchema = deepMerge(defaultSchema, deepClone(schema));
+  const method = newSchema.paths[swaggerPath][requestMethod];
+  const methodResponse = method.responses[statusCode];
+
   if (request.headers['Content-Type']) {
     union(method.consumes, request.headers['Content-Type']);
   }
 
-  method.produces = method.produces || [];
   if (response.headers['Content-Type']) {
     union(method.produces, response.headers['Content-Type']);
   }
 
-  method.parameters = method.parameters || [];
   method.parameters = method.parameters.concat(swaggerDetails);
 
   if (request.body !== null) {
@@ -176,33 +192,22 @@ export default function(
     }
   }
 
-  method.responses[response.statusCode] =
-    method.responses[response.statusCode] || {};
-  const responses = method.responses[response.statusCode];
-
-  responses.description =
-    responses.description || statusCodes[response.statusCode];
-
   const responseBody = parseBody(response);
   let responseBodySchema;
-
   if (responseBody === null) {
     responseBodySchema = null;
   } else {
     responseBodySchema = jsonSchema.generate(responseBody);
 
-    if (method.responses[response.statusCode].schema) {
+    if (methodResponse.schema) {
       responseBodySchema = jsonSchema.merge(
-        method.responses[response.statusCode].schema,
+        methodResponse.schema,
         responseBodySchema
       );
     }
   }
 
-  method.responses[response.statusCode] = {
-    description: statusCodes[response.statusCode],
-    schema: responseBodySchema
-  };
+  methodResponse.schema = responseBodySchema;
 
   return newSchema;
 }
