@@ -6,6 +6,7 @@
   "scripts": {
     "build": "neutrino build",
     "lint": "neutrino lint",
+    "format": "prettier --write \"**/*.{markdown,md}\" && yarn run lint --fix",
     "test": "neutrino test"
   },
   "devDependencies": {

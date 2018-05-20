@@ -3,13 +3,13 @@
 ## Assumptions
 
 * This tool only generates [Swagger 2.0](https://github.com/OAI/OpenAPI-Specification/blob/8b85bfe60d5822871dff5904252e859625af6007/versions/2.0.md#openapi-specification)
-as at the time of writing, most client generation does not support Swagger 3.0
+  as at the time of writing, most client generation does not support Swagger 3.0
 * This tool will try to differentiate between integers and numbers,
-but this may not always be right due to JavaScript's type limitations
+  but this may not always be right due to JavaScript's type limitations
 * Null is not currently supported by Swagger 2.0
-* Empty Arrays and Null values will be ignored during schema duration. However, the assumption is that this 
-type information will eventually be defined within your request/response so this should not be an issue when
-multiple valid responses are merged together.
+* Empty Arrays and Null values will be ignored during schema duration. However, the assumption is that this
+  type information will eventually be defined within your request/response so this should not be an issue when
+  multiple valid responses are merged together.
 * This tool only generates inferred schemas for JSON. XML and other data types will be treated as strings.
 * The tool does not currently guess formats, such as date/date-time/enums/minimum/maximum/lengths, or regex patterns etc.
 
@@ -51,4 +51,3 @@ If you are new to Swagger:
 * [JSON Schema](https://jsonschema.net/) - Online JSON to JSON Schema Generator, single input
 * [Liquid Technologies](https://www.liquid-technologies.com/online-json-to-schema-converter) - Online JSON to JSON Schema Converter, single input
 * [Prmd](https://github.com/interagent/prmd) - JSON Schema tools and doc generation for HTTP APIs
-
